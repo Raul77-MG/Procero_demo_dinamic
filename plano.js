@@ -44,18 +44,33 @@ function graficarPlano(ancho, largo, cantidadCuartos) {
   // Redimensionar elementos para que ocupen espacios disponibles
   const tamanoElemento = calcularTamanoElemento(anchoColumna, largoElemento, largo);
   // Crear elementos distribuidos en dos columnas
-  crearElementos(svg, cantidadElementos, tamanoElemento, [  "Comedor", "Cocina","Sala", "Baño","Cuarto"], ["blue", "green", "red", "purple", "black"], ancho, largo, cantidadCuartos, pasilloWidth);
+  crearElementos(svg, cantidadElementos, tamanoElemento, [  "Sala","Comedor","Baño","Cocina","Cuarto"], ["blue", "green", "red", "purple", "black"], ancho, largo, cantidadCuartos, pasilloWidth);
+  
+  const tamanoPrimerElemento = calcularTamanoElemento(anchoColumna, largoElemento, largo);
+  const tamanoUltimoElemento = calcularTamanoElemento(anchoColumna, largoElemento, largo);
+  const tamanoElementoBano = calcularTamanoElemento(anchoColumna, largoElemento, largoPlano, true);
+  
+  // Crear pasillo con los tamaños de los primeros y últimos elementos
+  crearPasillo(svg, ancho, largo, pasilloWidth, tamanoPrimerElemento, tamanoUltimoElemento);
+  
 
-  // Crear pasillo
-  crearPasillo(svg, ancho, largo, pasilloWidth, largoElemento, largoElemento);
 }
 
-function calcularTamanoElemento(anchoElemento, largoElemento, largoPlano) {
-  const anchoExcedente = Math.max(0, anchoElemento - largoPlano);
-  const nuevoAncho = anchoElemento - anchoExcedente;
-  const nuevoAlto = Math.max(0, largoElemento - anchoExcedente);
+function calcularTamanoElemento(anchoElemento, largoElemento, largoPlano, isBano) {
+  let nuevoAncho, nuevoLargo;
 
-  return { width: nuevoAncho, height: nuevoAlto };
+  if (isBano) {
+    // Establecer un ancho y largo fijo para el elemento "Baño"
+    nuevoAncho = 300; // Puedes ajustar este valor según sea necesario
+    nuevoLargo = 400; // Puedes ajustar este valor según sea necesario
+  } else {
+    // Calcular el ancho y largo para otros elementos
+    const anchoExcedente = Math.max(0, anchoElemento - largoPlano);
+    nuevoAncho = anchoElemento - anchoExcedente;
+    nuevoLargo = Math.max(0, largoElemento - anchoExcedente);
+  }
+
+  return { width: nuevoAncho, height: nuevoLargo };
 }
 
 function crearElementos(svg, cantidad, tamanoElemento, clases, colores, ancho, largo, cantidadCuartos, pasilloWidth) {
@@ -112,14 +127,15 @@ function crearElementos(svg, cantidad, tamanoElemento, clases, colores, ancho, l
   }
 }
 
-function crearPasillo(svg, ancho, largo, pasilloWidth, yPrimerElemento, yUltimoElemento) {
-  const pasilloHeight = yUltimoElemento - yPrimerElemento; // Alto del pasillo
-  const x = (ancho - pasilloWidth) / 2; // Posición en el centro del plano
-  const y = (largo-pasilloHeight)/2;
+function crearPasillo(svg, ancho, largo, pasilloWidth, tamanoPrimerElemento, tamanoUltimoElemento) {
+  const pasilloHeight = largo - tamanoPrimerElemento.height - tamanoUltimoElemento.height-margen-margen; // Height limited by the first and last elements
+  const x = (ancho - pasilloWidth) / 2; // Center the pasillo horizontally
+
+  // Calculate y to align the pasillo with the margins of the first and last elements
+  const y = margen + tamanoPrimerElemento.height;
 
   dibujarElemento(svg, { width: pasilloWidth, height: pasilloHeight }, "Pasillo", "gray", x, y);
 }
-
 
 
 function dibujarElemento(svg, dimensiones, clase, color, x, y) {
@@ -143,9 +159,10 @@ function dibujarElemento(svg, dimensiones, clase, color, x, y) {
     .text(clase);
 }
 
-
-const anchoPlano = 600;
-const largoPlano = 600;
+const anchoPlano = 500;
+const largoPlano = 500;
 const cantidadCuartos = 4;
 
+
 graficarPlano(anchoPlano, largoPlano, cantidadCuartos);
+
