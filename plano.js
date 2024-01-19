@@ -159,9 +159,9 @@ function dibujarElemento(svg, dimensiones, clase, color, x, y) {
     .text(clase);
 }
 
-const anchoPlano = 500;
-const largoPlano = 500;
-const cantidadCuartos = 4;
+const anchoPlano = 800;
+const largoPlano = 800;
+const cantidadCuartos = 3;
 
 
 graficarPlano(anchoPlano, largoPlano, cantidadCuartos);
