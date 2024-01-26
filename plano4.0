@@ -1,0 +1,222 @@
+const margen = 0;
+const espacioEntreElementos = 0;
+
+function graficarPlano(ancho, largo,dormitorios) {
+  const svg = d3.select("#plano")
+    .append("svg")
+    .attr("width", ancho)
+    .attr("height", largo);
+
+  // Líneas del contorno
+  const lineas = [
+    { x1: margen, y1: margen, x2: ancho - margen, y2: margen },
+    { x1: margen, y1: margen, x2: margen, y2: largo - margen },
+    { x1: ancho - margen, y1: margen, x2: ancho - margen, y2: largo - margen },
+    { x1: margen, y1: largo - margen, x2: ancho - margen, y2: largo - margen }
+  ];
+
+  svg.selectAll("line.contorno")
+    .data(lineas)
+    .enter().append("line")
+    .attr("class", "contorno")
+    .attr("x1", d => d.x1)
+    .attr("y1", d => d.y1)
+    .attr("x2", d => d.x2)
+    .attr("y2", d => d.y2)
+    .attr("stroke", "black")
+    .attr("stroke-width", 2);
+
+  // Llamadas a funciones para crear elementos específicos
+  let cantidadTotalElementos = 7; // Cuartos + Baño + Cocina + Sala + 
+  let largoBano=200;
+  let cantidadElementos = cantidadTotalElementos;
+  const pasilloWidth = 100; // Ancho del pasillo
+  const incremento = 1;
+ 
+  if (cantidadTotalElementos % 2 === 1) {
+    cantidadTotalElementos = cantidadTotalElementos + incremento;
+  }
+    // Verificar si el ancho es 5 y el largo está entre 7 y 10
+    if ((ancho === 500||ancho === 800) && (largo >= 800 && largo <= 1000)) {
+      largoBano = 120;
+    }
+    if ((ancho === 600 ||ancho === 700) && (largo >= 800 && largo <= 1000)) {
+      largoBano = 150;
+    }
+  // Ancho y alto de cada columna
+  const anchoColumna = (ancho - 2 * margen) / 2;
+  const largoElemento = (largo - 2 * margen - (cantidadTotalElementos - 1) * espacioEntreElementos) / (cantidadTotalElementos / 2);
+
+  // Redimensionar elementos para que ocupen espacios disponibles
+  // Ancho y alto personalizado para cada elemento (excepto pasillo)
+  const tamanoElemento = [
+    { width: (ancho / 2) - margen, height: ((largo - largoBano) / 3) - 2 * margen },  // Ancho y alto para "Dormitorio1"
+    { width: ((ancho / 2) - pasilloWidth - margen), height: largoBano },            // Ancho y alto para "Baño"
+    { width: ((ancho / 2) - pasilloWidth - margen), height: ((largo - largoBano) / 3) }, // Ancho y alto para "Cocina"
+    { width: ((ancho / 2) -pasilloWidth - margen), height: ((largo - largoBano) / 3) }, // Ancho y alto para "Comedor"
+    { width: (ancho / 2) - margen, height: (largo  / 3)+50 - 2 * margen },   // Ancho y alto para "Dormitorio2"
+    { width: ((ancho / 2) -margen), height: (largo / 3)  },  // Ancho y alto para "Dormitorio3"
+    { width: ((ancho / 2) -margen), height: (largo  / 3)-50  }  // Ancho y alto para "Sala"
+  ];
+
+  // Crear elementos distribuidos en dos columnas
+  crearElementos(svg, cantidadElementos, tamanoElemento, ["Dormitorio1", "Baño", "Cocina", "Comedor", "Dormitorio2", "Dormitorio3", "Sala"], ["black", "green", "red", "purple", "black", "black", "blue"], ancho, largo, pasilloWidth);
+
+  const tamanoPrimerElemento = ((largo - largoBano) / 3) - 2 * margen;//calcularTamanoElemento(anchoColumna, largoElemento, largo);
+  const tamanoUltimoElemento = calcularTamanoElemento(anchoColumna, largoElemento, largo);
+
+  // Mostrar los valores en la tabla
+  mostrarEnTabla("Ancho del Plano", ancho/100+" metros");
+  mostrarEnTabla("Largo del Plano", largo/100+" metros");
+  mostrarEnTabla("Sala", (tamanoElemento[6].width/100).toFixed(2) + " x " + (tamanoElemento[6].height/100).toFixed(2)   +" metros");
+  mostrarEnTabla("Comedor", (tamanoElemento[3].width/100).toFixed(2) + " x " + (tamanoElemento[3].height/100).toFixed(2)  +" metros") ;
+  mostrarEnTabla("Cocina", (tamanoElemento[2].width/100).toFixed(2) + " x " + (tamanoElemento[2].height/100).toFixed(2)  +" metros") ;
+  mostrarEnTabla("Baño", (tamanoElemento[1].width/100).toFixed(2) + " x " + (tamanoElemento[1].height/100).toFixed(2)  +" metros") ;
+  mostrarEnTabla("Dormitorio 1", (tamanoElemento[0].width/100).toFixed(2) + " x " + (tamanoElemento[0].height/100).toFixed(2)  +" metros") ;
+  mostrarEnTabla("Dormitorio 2", (tamanoElemento[4].width/100).toFixed(2) + " x " + (tamanoElemento[4].height/100).toFixed(2)  +" metros");
+  mostrarEnTabla("Dormitorio 3", (tamanoElemento[5].width/100).toFixed(2) + " x " + (tamanoElemento[5].height/100).toFixed(2)  +" metros");
+ 
+  // Crear pasillo en el medio del ancho y después del margen inferior de los dormitorios 1 y 2
+  crearPasillo(svg, ancho, largo, pasilloWidth, tamanoPrimerElemento, margen,largoBano);
+}
+
+function calcularTamanoElemento(anchoElemento, largoElemento, largoPlano) {
+  let nuevoAncho, nuevoLargo;
+
+  // Calcular el ancho y largo para otros elementos
+  const anchoExcedente = Math.max(0, anchoElemento - largoPlano);
+  nuevoAncho = anchoElemento - anchoExcedente;
+  nuevoLargo = Math.max(0, largoElemento - anchoExcedente);
+
+  return { width: nuevoAncho, height: nuevoLargo };
+}
+
+function crearElementos(svg, cantidad, tamanoElemento, clases, colores, ancho, largo, pasilloWidth) {
+  const elementosPorColumna = Math.ceil(cantidad / 2);
+  const espacioEntreElementosTotal = (elementosPorColumna - 1) * espacioEntreElementos;
+
+  for (let i = 0; i < cantidad; i++) {
+    let x, y;
+    if (i === 0) {
+      x = margen;
+      y = margen + i * (tamanoElemento[i].height + espacioEntreElementos);
+    }
+    else if(i===1){
+      x = margen;
+      y = margen + tamanoElemento[0].height;
+    } else if (i === 2) {
+      x = margen;
+      y = margen + tamanoElemento[0].height+ tamanoElemento[1].height + espacioEntreElementos;
+    }
+    else if (i === 3) {
+      x = margen;
+      y = margen + tamanoElemento[0].height+ tamanoElemento[1].height+ tamanoElemento[2].height + espacioEntreElementos;
+    } else if (i === 4) {
+      // Dormitorio 2 en la misma fila que Dormitorio 1
+      x =  (ancho / 2) ;
+      y = margen;
+    } else if (i === 5) {
+      // Dormitorio 3 desde el margen inferior del Dormitorio 2
+      x = (ancho / 2) ;
+      y = margen + tamanoElemento[4].height;
+    } else if (i === 6) {
+      // Sala desde el margen inferior del Dormitorio 3
+      x = (ancho / 2) ;
+      y = margen + tamanoElemento[4].height+ tamanoElemento[5].height + espacioEntreElementos;
+    } else {
+      x = (ancho) / 2 + pasilloWidth / 2;
+      const index = i - 7; // Adjust for the first 7 elements
+      const row = index % (elementosPorColumna - 1);
+      y = margen + tamanoElemento[i].height + row * (tamanoElemento[i].height + espacioEntreElementos) + row * espacioEntreElementos;
+    }
+
+    dibujarElemento(svg, tamanoElemento[i], clases[i], colores[i], x, y);
+  }
+}
+function mostrarEnTabla(parametro, valor) {
+  // Añadir una fila a la tabla con el parámetro y el valor
+  const table = document.getElementById("infoTable").getElementsByTagName('tbody')[0];
+  const row = table.insertRow(table.rows.length);
+  const cell1 = row.insertCell(0);
+  const cell2 = row.insertCell(1);
+  cell1.innerHTML = parametro;
+  cell2.innerHTML = valor;
+}
+function crearPasillo(svg, ancho, largo, pasilloWidth, tamanoPrimerElemento, margen,largoBano) {
+  const pasilloHeight = largo - tamanoPrimerElemento -2*margen; // Height limited by the first and last elements
+  const x = ((ancho - pasilloWidth) / 2)-50 ; // Center the pasillo horizontally
+
+  // Calculate y to align the pasillo with the margins of the first and last elements
+  const y =  ((largo - largoBano) / 3) -  margen ;
+
+  dibujarElemento(svg, { width: pasilloWidth, height: pasilloHeight }, "Pasillo", "gray", x, y);
+}
+
+function dibujarElemento(svg, dimensiones, clase, color, x, y) {
+  svg.append("rect")
+    .attr("class", clase)
+    .attr("x", x)
+    .attr("y", y)
+    .attr("width", dimensiones.width)
+    .attr("height", dimensiones.height)
+    .attr("fill", "none")
+    .attr("stroke", "black")
+    .attr("stroke-width", 2);
+
+  // Agregando nombre con su respectivo color
+  svg.append("text")
+    .attr("x", x + dimensiones.width / 2)
+    .attr("y", y + dimensiones.height / 2)
+    .attr("text-anchor", "middle")
+    .attr("dominant-baseline", "middle")
+    .attr("fill", color)
+    .text(clase);
+
+  console.log(`${clase}: width=${dimensiones.width}, height=${dimensiones.height}`);
+}
+// para los 7 elementos y que la distribucion sea coherente, el minimo de ancho debe ser 5m y largo 7m
+function generarPlano() {
+  // Obtener valores del formulario
+  const anchoInput = document.getElementById("ancho").value;
+  const largoInput = document.getElementById("largo").value;
+  const dormitoriosInput = document.getElementById("cuartos").value;
+
+  // Validar los valores (puedes agregar más validaciones según tus necesidades)
+  let anchoPlano = parseFloat(anchoInput);
+  let largoPlano = parseFloat(largoInput);
+  let dormitorios = parseInt(dormitoriosInput);
+  const Centimetros = 100;
+
+  // Verificar que los valores sean números válidos
+  if (isNaN(anchoPlano) || isNaN(largoPlano) || isNaN(dormitorios) || anchoPlano <= 0 || largoPlano <= 0 || dormitorios <= 0) {
+    alert("Por favor, ingresa valores válidos para el ancho, largo y número de dormitorios.");
+    return;
+  }
+
+  // Enforce minimum and maximum values for width and length
+  const minAncho = 5;
+  const maxAncho = 8;
+  const minLargo = 8;
+  const maxLargo = 15;
+
+  // Verificar si cumple con las condisiones del minimo y maximo 
+  if (anchoPlano < minAncho || anchoPlano > maxAncho || largoPlano < minLargo || largoPlano > maxLargo) {
+    alert("Por favor, ingresa un ancho entre 5 y 8 metros y un largo entre 8 y 15 metros.");
+    return;
+  }
+
+  // Convertir las dimensiones 
+  let ancho = anchoPlano * Centimetros;
+  let largo = largoPlano * Centimetros;
+
+  // Limpiar el contenedor del plano antes de generar uno nuevo
+  document.getElementById("plano").innerHTML = "";
+  // Mostrar los valores en la consola (puedes ajustar esto según tus necesidades)
+  console.log("Ancho del Plano:", anchoPlano, "metros");
+  console.log("Largo del Plano:", largoPlano, "metros");
+  console.log("Número de Dormitorios:", dormitorios);
+  // Llamar a la función para generar el plano
+  graficarPlano(ancho, largo, dormitorios);
+}
+
+
