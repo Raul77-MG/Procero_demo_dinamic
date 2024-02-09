@@ -78,17 +78,23 @@ document.getElementById("generarBtn").addEventListener("click", function () {
       crearElementos(svg, cantidadElementos, tamanoElemento, ["Cocina", "Comedor", "Sala", "Dormitorio1", "Baño"], ["green", "red", "purple", "black", "blue"], ancho, largo, pasilloWidth);
       const tamanoPrimerElemento = ((largo - largoBano) / 3) - 2 * margen;
       const tamanoUltimoElemento = calcularTamanoElemento(anchoColumna, largoElemento, largo);
+      actualizarTabla(ancho, largo, tamanoElemento, largoBano);
       crearPasillo(svg, ancho, largo, pasilloWidth, tamanoElemento[0].height, margen, largoBano);
   }
   else if ((ancho >= 700 && ancho <= 900)&&(largo > 1200 && largo<=1600)) {
     cantidadElementos=cantidadElementos+1;
     // Create Dormitorio element
     crearElemento2(svg, cantidadElementos, tamanoElemento2, ["Cocina", "Comedor", "Sala", "Dormitorio1", "Baño","Dormitorio2"], ["green", "red", "purple", "black", "blue", "orange"], ancho, largo, pasilloWidth);
+    actualizarTabla2(ancho, largo, tamanoElemento2, largoBano);
     crearPasillo(svg, ancho, largo, pasilloWidth, tamanoElemento2[0].height, margen, largoBano);
     crearPasillo2(svg, ancho, largo, pasilloWidth, tamanoElemento2[0].height,tamanoElemento2[3].height, margen, largoBano);
 }  
+else{
+  alert(">>PARA OTRAS DIMENSIONES EL PROGRAMA ESTA EN PROCESO DE CONSTRUCCION<<");
+  return;
+}
     //agregarMedidas(svg, ancho, largo);
-  }
+}
   function generarPlano() {
     // Obtener valores del formulario
     const anchoInput = document.getElementById("ancho").value;
@@ -127,10 +133,10 @@ document.getElementById("generarBtn").addEventListener("click", function () {
     document.getElementById("plano").innerHTML = "";
   
     // Llamar a la función para generar el plano
-    if (dormitorios !== 3) {
-      alert("¡Suscríbete!"); // Show alert message
-      return; 
-    }
+    // if (dormitorios !== 3) {
+    //   alert("¡Suscríbete!"); // Show alert message
+    //   return; 
+    // }
   
     // Crear el plano y obtener los tamaños de los elementos
     graficarPlano(ancho, largo, dormitorios);
@@ -159,18 +165,33 @@ document.getElementById("generarBtn").addEventListener("click", function () {
   function actualizarTabla(ancho, largo, tamanoElemento, largoBano) {
     const table = document.getElementById("infoTable").getElementsByTagName('tbody')[0];
     table.innerHTML = "";
+  
     mostrarEnTabla("Ancho del Plano", (ancho / 100).toFixed(2) + " metros");
     mostrarEnTabla("Largo del Plano", (largo / 100).toFixed(2) + " metros");
-    mostrarEnTabla("Sala", (tamanoElemento[6].width / 100).toFixed(2) + " x " + (tamanoElemento[6].height / 100).toFixed(2) + " metros");
-    mostrarEnTabla("Comedor", (tamanoElemento[3].width / 100).toFixed(2) + " x " + (tamanoElemento[3].height / 100).toFixed(2) + " metros");
-    mostrarEnTabla("Cocina", (tamanoElemento[2].width / 100).toFixed(2) + " x " + (tamanoElemento[2].height / 100).toFixed(2) + " metros");
-    mostrarEnTabla("Baño", (tamanoElemento[1].width / 100).toFixed(2) + " x " + (tamanoElemento[1].height / 100).toFixed(2) + " metros");
-    mostrarEnTabla("Dormitorio 1", (tamanoElemento[0].width / 100).toFixed(2) + " x " + (tamanoElemento[0].height / 100).toFixed(2) + " metros");
-    mostrarEnTabla("Dormitorio 2", (tamanoElemento[4].width / 100).toFixed(2) + " x " + (tamanoElemento[4].height / 100).toFixed(2) + " metros");
-    mostrarEnTabla("Dormitorio 3", (tamanoElemento[5].width / 100).toFixed(2) + " x " + (tamanoElemento[5].height / 100).toFixed(2) + " metros");
-   
-    
+  
+    mostrarEnTabla("Cocina", (tamanoElemento[0].width / 100).toFixed(2) + " x " + (tamanoElemento[0].height / 100).toFixed(2) + " metros");
+    mostrarEnTabla("Comedor", (tamanoElemento[1].width / 100).toFixed(2) + " x " + (tamanoElemento[1].height / 100).toFixed(2) + " metros");
+    mostrarEnTabla("Sala", (tamanoElemento[2].width / 100).toFixed(2) + " x " + (tamanoElemento[2].height / 100).toFixed(2) + " metros");
+    mostrarEnTabla("Dormitorio 1", (tamanoElemento[3].width / 100).toFixed(2) + " x " + (tamanoElemento[3].height / 100).toFixed(2) + " metros");
+    mostrarEnTabla("Baño", (tamanoElemento[4].width / 100).toFixed(2) + " x " + (tamanoElemento[4].height / 100).toFixed(2) + " metros");
   }
+
+  function actualizarTabla2(ancho, largo, tamanoElemento, largoBano) {
+    const table = document.getElementById("infoTable").getElementsByTagName('tbody')[0];
+    table.innerHTML = "";
+  
+    mostrarEnTabla("Ancho del Plano", (ancho / 100).toFixed(2) + " metros");
+    mostrarEnTabla("Largo del Plano", (largo / 100).toFixed(2) + " metros");
+  
+    mostrarEnTabla("Cocina", (tamanoElemento[0].width / 100).toFixed(2) + " x " + (tamanoElemento[0].height / 100).toFixed(2) + " metros");
+    mostrarEnTabla("Comedor", (tamanoElemento[1].width / 100).toFixed(2) + " x " + (tamanoElemento[1].height / 100).toFixed(2) + " metros");
+    mostrarEnTabla("Sala", (tamanoElemento[2].width / 100).toFixed(2) + " x " + (tamanoElemento[2].height / 100).toFixed(2) + " metros");
+    mostrarEnTabla("Dormitorio 1", (tamanoElemento[3].width / 100).toFixed(2) + " x " + (tamanoElemento[3].height / 100).toFixed(2) + " metros");
+    mostrarEnTabla("Baño", (tamanoElemento[4].width / 100).toFixed(2) + " x " + (tamanoElemento[4].height / 100).toFixed(2) + " metros");
+    mostrarEnTabla("Dormitorio 2", (tamanoElemento[5].width / 100).toFixed(2) + " x " + (tamanoElemento[5].height / 100).toFixed(2) + " metros");
+  }
+  
+
   function calcularTamanoElemento(anchoElemento, largoElemento, largoPlano) {
     let nuevoAncho, nuevoLargo;
   
@@ -359,6 +380,9 @@ document.getElementById("generarBtn").addEventListener("click", function () {
     console.log("====================================================================");
     console.log(`${clase}: width=${dimensiones.width}, height=${dimensiones.height}`);
   }
+  
+  
+  
   
   
   
