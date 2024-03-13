@@ -1,5 +1,6 @@
 
 
+
 document.getElementById("generarBtn").addEventListener("click", function () {
     generarPlano();
   });
@@ -92,6 +93,16 @@ document.getElementById("generarBtn").addEventListener("click", function () {
       { width: minWidth -margen, height: ((largo ) / 5) }, // Ancho y alto para "dor2"
       { width: ((ancho / 2) -margen- pasilloWidth/2), height: ((largo ) / 5) }, // Ancho y alto para "dor3"
     ];
+    const tamanoElemento5 = [
+      { width: minWidth  -margen, height:mminHeight},  // Ancho y alto para "cocina"
+      { width: minWidth - margen, height: mminHeight },            // Ancho y alto para "comedor"
+      { width: minWidth  - margen, height: mminHeight+150 }, // Ancho y alto para "sala"
+      { width: ((ancho / 2) -margen- pasilloWidth/2), height: ((largo ) / 5) }, // Ancho y alto para "dor1"
+      { width: anchoBano, height: largoBano },   // Ancho y alto para "bano"
+      { width: anchoBano, height: largoBano },
+      { width: minWidth -margen, height: ((largo ) / 5) }, // Ancho y alto para "dor2"
+      { width: ((ancho / 2) -margen- pasilloWidth/2), height: ((largo ) / 5) }, // Ancho y alto para "dor3"
+    ];
     if ((ancho >= 700 && ancho <= 900) && (largo == 1200)) {
       // Crear elementos distribuidos en dos columnas
       crearElementos(svg, cantidadElementos, tamanoElemento, ["Cocina", "Comedor", "Sala", "Dormitorio1", "Baño"], ["green", "red", "purple", "black", "blue"], ancho, largo, pasilloWidth);
@@ -116,13 +127,21 @@ else if ((ancho >= 700 && ancho <= 900)&&(largo > 1600 && largo<=1700 )) {
   crearPasillo(svg, ancho, largo, pasilloWidth, tamanoElemento3[0].height, margen, largoBano);
   crearPasillo32(svg, ancho, largo, pasilloWidth, tamanoElemento3[0].height,tamanoElemento3[3].height, margen, largoBano);
 }  
-else if ((ancho >= 700 && ancho <= 900)&&(largo > 1700 && largo<=2000 )) {
+else if ((ancho >= 700)&&(largo > 1700 && largo<=2000 )) {
   cantidadElementos=cantidadElementos+3;
   // Create Dormitorio element
   crearElemento4(svg, cantidadElementos, tamanoElemento4, ["Cocina", "Comedor", "Sala", "Dormitorio1", "Baño", "Baño2","Dormitorio2","Dormitorio3"], ["green", "red", "purple", "black", "blue","blue", "orange", "orange"], ancho, largo, pasilloWidth);
   //actualizarTabla2(ancho, largo, tamanoElemento2, largoBano);
   crearPasillo(svg, ancho, largo, pasilloWidth, tamanoElemento4[0].height, margen, largoBano);
-  crearPasillo3(svg, ancho, largo, pasilloWidth, tamanoElemento4[6].height,tamanoElemento4[3].height, margen, largoBano);
+  
+}
+else if ((ancho >= 800 && ancho <= 900)&&(largo > 1700 && largo<=2000 )) {
+  cantidadElementos=cantidadElementos+3;
+  // Create Dormitorio element
+  crearElemento5(svg, cantidadElementos, tamanoElemento5, ["Cocina", "Comedor", "Sala", "Dormitorio1", "Baño", "Baño2","Dormitorio2","Dormitorio3"], ["green", "red", "purple", "black", "blue","blue", "orange", "orange"], ancho, largo, pasilloWidth);
+  //actualizarTabla2(ancho, largo, tamanoElemento2, largoBano);
+  crearPasillo(svg, ancho, largo, pasilloWidth, tamanoElemento5[0].height, margen, largoBano);
+  crearPasillo3(svg, ancho, largo, pasilloWidth, tamanoElemento5[6].height,tamanoElemento5[3].height, margen, largoBano);
 }
 else{
   alert("<<<<<<<<  solicitar plano personalizado  >>>>>>>>>>");
@@ -408,6 +427,62 @@ else{
       
       } else if (i === 4) {
         
+        x = (ancho / 2)+pasilloWidth/2  -excendete;
+        y = margen + tamanoElemento[3].height ;
+
+      } else if (i === 5) {
+        
+        x = (ancho / 2)+pasilloWidth/2 -excendete;
+        y = margen + tamanoElemento[4].height+ tamanoElemento[3].height ;
+      } else if (i === 6) {
+        
+        x = (ancho / 2)+pasilloWidth/2 -excendete;
+        y = margen+tamanoElemento[5].height+ tamanoElemento[4].height+ tamanoElemento[3].height ;
+      
+      } else if (i === 7) {
+        
+        x = (ancho / 2)+pasilloWidth/2 -excendete;
+        y = margen+tamanoElemento[6].height+tamanoElemento[5].height+ tamanoElemento[4].height+ tamanoElemento[3].height ;
+      
+      } else { 
+        x = (ancho) / 2 + pasilloWidth / 2;
+        const index = i - 8; 
+        const row = index % (elementosPorColumna - 1);
+        y = margen + tamanoElemento[i].height + row * (tamanoElemento[i].height + espacioEntreElementos) + row * espacioEntreElementos;
+      }
+
+      dibujarElemento(svg, tamanoElemento[i], clases[i], colores[i], x, y);
+  
+    }
+  }
+  function crearElemento5(svg, cantidad, tamanoElemento, clases, colores, ancho, largo, pasilloWidth) {
+    const elementosPorColumna = Math.ceil(cantidad / 2);
+    const espacioEntreElementosTotal = (elementosPorColumna - 1) * espacioEntreElementos;
+    const minanch=700;
+    const excendete=(ancho-minanch)/2;
+    for (let i = 0; i < cantidad; i++) {
+      let x, y;
+      if (i === 0) {
+        x = margen;
+        y = margen + i * (tamanoElemento[i].height + espacioEntreElementos);
+  
+        
+      } else if (i === 1) {
+        x = margen;
+        y = margen + tamanoElemento[0].height;
+  
+        
+      } else if (i === 2) {
+        x = margen;
+        y = margen + tamanoElemento[0].height + tamanoElemento[1].height + espacioEntreElementos;
+       //SIGUIENTE COLUMNA
+      } else if (i === 3) {
+        x = (ancho / 2)+pasilloWidth/2 -excendete ;
+        y = margen;
+        
+      
+      } else if (i === 4) {
+        
         x = (ancho / 2)+pasilloWidth/2 +pasilloWidth -excendete;
         y = margen + tamanoElemento[3].height ;
 
@@ -436,7 +511,6 @@ else{
   
     }
   }
-
   function mostrarEnTabla(parametro, valor) {
     // Añadir una fila a la tabla con el parámetro y el valor
     const table = document.getElementById("infoTable").getElementsByTagName('tbody')[0];
@@ -578,5 +652,8 @@ else{
     console.log(`${clase}: width=${dimensiones.width}, height=${dimensiones.height}`);
   }
   
+  
+  
+
   
   
