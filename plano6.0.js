@@ -1,6 +1,5 @@
 
 
-
 document.getElementById("generarBtn").addEventListener("click", function () {
     generarPlano();
   });
@@ -127,7 +126,7 @@ else if ((ancho >= 700 && ancho <= 900)&&(largo > 1600 && largo<=1700 )) {
   crearPasillo(svg, ancho, largo, pasilloWidth, tamanoElemento3[0].height, margen, largoBano);
   crearPasillo32(svg, ancho, largo, pasilloWidth, tamanoElemento3[0].height,tamanoElemento3[3].height, margen, largoBano);
 }  
-else if ((ancho >= 700)&&(largo > 1700 && largo<=2000 )) {
+else if ((ancho == 700)&&(largo > 1700 && largo<=2000 )) {
   cantidadElementos=cantidadElementos+3;
   // Create Dormitorio element
   crearElemento4(svg, cantidadElementos, tamanoElemento4, ["Cocina", "Comedor", "Sala", "Dormitorio1", "Baño", "Baño2","Dormitorio2","Dormitorio3"], ["green", "red", "purple", "black", "blue","blue", "orange", "orange"], ancho, largo, pasilloWidth);
